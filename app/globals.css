@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  ============================================================================
+  DESIGN SYSTEM — FIJO EN CÓDIGO
+  ----------------------------------------------------------------------------
+  Esta es la ÚNICA fuente de verdad del aspecto visual del sitio.
+  Editable SOLO por el programador. El panel /admin NO puede tocar estos
+  valores: la abogada gestiona contenido, no estilo.
+
+  Para cambiar la identidad visual de todo el sitio, editá los tokens de abajo.
+  ============================================================================
+*/
+
+@theme {
+  /* --- Colores base --- */
+  --color-background: #fdfdfb; /* blanco cálido */
+  --color-foreground: #1c1c1c; /* texto principal */
+
+  --color-muted: #f4f2ee; /* fondos suaves de sección */
+  --color-muted-foreground: #6b6459; /* texto secundario */
+  --color-border: #e6e1d8; /* bordes / divisores */
+
+  /* --- Color primario (navy sobrio) --- */
+  --color-primary: #1b2a4a;
+  --color-primary-foreground: #ffffff;
+
+  /* --- Acento (bronce/dorado elegante) --- */
+  --color-accent: #a67c52;
+  --color-accent-foreground: #ffffff;
+
+  /* --- Estados --- */
+  --color-ring: #a67c52; /* foco accesible */
+  --color-destructive: #8b2e2e;
+
+  /* --- Tipografía --- */
+  /* Serif para títulos, sans para cuerpo. Las fuentes se cargan en layout.tsx */
+  --font-serif: var(--font-heading), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-body), system-ui, -apple-system, sans-serif;
+
+  /* --- Radios --- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+
+  /* --- Ancho de contenido --- */
+  --container-content: 72rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Estilos base del documento */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  color: var(--color-primary);
 }
