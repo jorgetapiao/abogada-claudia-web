@@ -30,3 +30,26 @@ export function sectionBackgroundClass(background: SectionBackground | undefined
       return "bg-background text-foreground";
   }
 }
+
+/**
+ * Color de TÍTULOS (h1-h4): `globals.css` los fija en navy a propósito para
+ * toda la página, pero eso los vuelve invisibles sobre un fondo de sección
+ * navy/bronce. "Automático" corrige ese contraste solo; las otras dos son
+ * una elección deliberada de la abogada, también acotada a la paleta.
+ */
+export const textColorSchema = z.enum(["auto", "dark", "light"]).default("auto");
+
+export type TextColor = z.infer<typeof textColorSchema>;
+
+export const textColorOptions: { value: TextColor; label: string }[] = [
+  { value: "auto", label: "Automático (según el fondo)" },
+  { value: "dark", label: "Oscuro (navy)" },
+  { value: "light", label: "Claro (blanco)" },
+];
+
+/** true si, para este fondo y esta elección de color, el texto debe ser claro. */
+export function useLightText(background: SectionBackground, textColor: TextColor): boolean {
+  if (textColor === "light") return true;
+  if (textColor === "dark") return false;
+  return background === "dark" || background === "accent"; // auto
+}

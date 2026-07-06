@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { sectionBackgroundSchema } from "../section-background";
+import { sectionBackgroundSchema, textColorSchema } from "../section-background";
 
 /**
  * Esquema del bloque `hero`. La validación de `data`/`settings` se usa:
@@ -23,6 +23,9 @@ export const heroSettingsSchema = z.object({
   height: z.enum(["full", "medium"]).default("medium"),
   // Sin efecto en la variante "imageBackground" (usa la imagen de fondo).
   background: sectionBackgroundSchema,
+  textColor: textColorSchema,
+  // Solo aplica a la variante "sideBySide".
+  imagePosition: z.enum(["right", "left", "center"]).default("right"),
 });
 
 export type HeroData = z.infer<typeof heroDataSchema>;

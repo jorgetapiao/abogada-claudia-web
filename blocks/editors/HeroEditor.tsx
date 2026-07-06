@@ -2,6 +2,7 @@
 
 import { MediaPicker } from "@/components/admin/MediaPicker";
 import { SectionBackgroundField } from "@/components/admin/SectionBackgroundField";
+import { TextColorField } from "@/components/admin/TextColorField";
 import type { BlockEditorProps } from "../types";
 import type { HeroData, HeroSettings } from "../schemas/hero";
 
@@ -108,12 +109,34 @@ export function HeroEditor({
         </Field>
       </div>
 
-      {settings.variant !== "imageBackground" && (
-        <SectionBackgroundField
-          value={settings.background}
-          onChange={(background) => setSettings({ background })}
-        />
+      {settings.variant === "sideBySide" && (
+        <Field label="Posición de la imagen">
+          <select
+            value={settings.imagePosition}
+            onChange={(e) =>
+              setSettings({ imagePosition: e.target.value as HeroSettings["imagePosition"] })
+            }
+            className={inputClass}
+          >
+            <option value="right">A la derecha</option>
+            <option value="left">A la izquierda</option>
+            <option value="center">Centro (imagen debajo)</option>
+          </select>
+        </Field>
       )}
+
+      <div className="grid grid-cols-2 gap-4">
+        {settings.variant !== "imageBackground" && (
+          <SectionBackgroundField
+            value={settings.background}
+            onChange={(background) => setSettings({ background })}
+          />
+        )}
+        <TextColorField
+          value={settings.textColor}
+          onChange={(textColor) => setSettings({ textColor })}
+        />
+      </div>
     </div>
   );
 }
