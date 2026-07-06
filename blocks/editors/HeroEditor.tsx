@@ -1,6 +1,7 @@
 "use client";
 
 import { MediaPicker } from "@/components/admin/MediaPicker";
+import { SectionBackgroundField } from "@/components/admin/SectionBackgroundField";
 import type { BlockEditorProps } from "../types";
 import type { HeroData, HeroSettings } from "../schemas/hero";
 
@@ -106,6 +107,13 @@ export function HeroEditor({
           </select>
         </Field>
       </div>
+
+      {settings.variant !== "imageBackground" && (
+        <SectionBackgroundField
+          value={settings.background}
+          onChange={(background) => setSettings({ background })}
+        />
+      )}
     </div>
   );
 }

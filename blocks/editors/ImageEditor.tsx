@@ -1,6 +1,7 @@
 "use client";
 
 import { MediaPicker } from "@/components/admin/MediaPicker";
+import { SectionBackgroundField } from "@/components/admin/SectionBackgroundField";
 import type { BlockEditorProps } from "../types";
 import type { ImageData, ImageSettings } from "../schemas/image";
 
@@ -52,15 +53,20 @@ export function ImageEditor({
             <option value="contained">Contenido</option>
           </select>
         </Field>
-        <label className="flex items-center gap-2 self-end pb-2 text-sm">
-          <input
-            type="checkbox"
-            checked={settings.rounded}
-            onChange={(e) => setSettings({ rounded: e.target.checked })}
-          />
-          Bordes redondeados
-        </label>
+        <SectionBackgroundField
+          value={settings.background}
+          onChange={(background) => setSettings({ background })}
+        />
       </div>
+
+      <label className="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          checked={settings.rounded}
+          onChange={(e) => setSettings({ rounded: e.target.checked })}
+        />
+        Bordes redondeados
+      </label>
     </div>
   );
 }

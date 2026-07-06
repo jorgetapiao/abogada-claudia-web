@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { BlockRenderProps } from "../types";
 import type { HeroData, HeroSettings } from "../schemas/hero";
+import { sectionBackgroundClass } from "../section-background";
 
 /**
  * Componente PÚBLICO del bloque `hero` (server component).
@@ -85,15 +86,14 @@ function HeroImageBackground({ data, settings }: BlockRenderProps<HeroData, Hero
 }
 
 function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
+  const inverse = settings.background === "dark" || settings.background === "accent";
   return (
-    <section className={heightClass(settings.height)}>
+    <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
       <div className="mx-auto grid max-w-content grid-cols-1 items-center gap-10 px-6 md:grid-cols-2">
         <div>
           <h1 className="text-4xl font-semibold md:text-5xl">{data.heading}</h1>
-          {data.subheading && (
-            <p className="mt-4 text-lg text-muted-foreground">{data.subheading}</p>
-          )}
-          <CtaButtons data={data} />
+          {data.subheading && <p className="mt-4 text-lg opacity-80">{data.subheading}</p>}
+          <CtaButtons data={data} inverse={inverse} />
         </div>
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
           {data.backgroundImage && (
@@ -106,17 +106,16 @@ function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSetti
 }
 
 function HeroTextOnly({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
+  const inverse = settings.background === "dark" || settings.background === "accent";
   return (
-    <section className={`bg-muted ${heightClass(settings.height)}`}>
+    <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
       <div className="mx-auto max-w-content px-6 text-center">
         <h1 className="text-4xl font-semibold md:text-5xl">{data.heading}</h1>
         {data.subheading && (
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            {data.subheading}
-          </p>
+          <p className="mx-auto mt-4 max-w-2xl text-lg opacity-80">{data.subheading}</p>
         )}
         <div className="flex justify-center">
-          <CtaButtons data={data} />
+          <CtaButtons data={data} inverse={inverse} />
         </div>
       </div>
     </section>
