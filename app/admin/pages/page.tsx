@@ -31,7 +31,8 @@ export default async function AdminPagesList() {
                 {p.title}
               </Link>
               <span className="ml-2 text-xs text-muted-foreground">
-                /{p.slug} · {p.status === "published" ? "Publicada" : "Borrador"}
+                {p.slug === "/" ? "/" : `/${p.slug}`} ·{" "}
+                {p.status === "published" ? "Publicada" : "Borrador"}
                 {p.isSystem ? " · sistema" : ""}
               </span>
             </div>

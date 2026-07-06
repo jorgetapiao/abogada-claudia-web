@@ -1,20 +1,19 @@
 import { BlockRenderer } from "@/blocks/BlockRenderer";
-import { getPublishedPage } from "@/lib/pages";
+import { getPublishedPage, HOME_SLUG } from "@/lib/pages";
 import type { BlockInstance } from "@/blocks/types";
 
 // Lee la DB en cada request. TODO (optimización): pasar a ISR con `revalidate`
 // una vez definido el entorno, para servir la home estática y revalidarla.
 export const dynamic = "force-dynamic";
 
-/** Contenido de respaldo si aún no existe la página "home" en la base. */
+/** Contenido de respaldo si por algún motivo la página "Inicio" no está disponible. */
 const fallbackBlocks: BlockInstance[] = [
   {
     _id: "fallback-hero",
     type: "hero",
     data: {
       heading: "Asesoría legal en la que puede confiar",
-      subheading:
-        "Creá la página «Inicio» desde el panel /admin para reemplazar este contenido.",
+      subheading: "Editá la página «Inicio» desde el panel /admin para reemplazar este contenido.",
       backgroundImage: "",
       primaryCtaLabel: "Contacto",
       primaryCtaHref: "/contacto",
@@ -26,7 +25,7 @@ const fallbackBlocks: BlockInstance[] = [
 ];
 
 export default async function Home() {
-  const page = await getPublishedPage("home");
+  const page = await getPublishedPage(HOME_SLUG);
   const blocks = page?.blocks?.length ? page.blocks : fallbackBlocks;
   return <BlockRenderer blocks={blocks} />;
 }

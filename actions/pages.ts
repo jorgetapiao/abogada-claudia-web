@@ -8,14 +8,16 @@ import { requireAdmin } from "@/lib/require-admin";
 import { PageModel } from "@/models/Page";
 import { validateBlocks } from "@/lib/validate-blocks";
 import { slugify } from "@/lib/slug";
+import { HOME_SLUG } from "@/lib/pages";
 import type { BlockInstance } from "@/blocks/types";
 
 const metaSchema = z.object({
   title: z.string().min(1, "El título es obligatorio"),
+  // La home usa el slug reservado "/" (ver HOME_SLUG); el resto, minúsculas/números/guiones.
   slug: z
     .string()
     .min(1, "El slug es obligatorio")
-    .regex(/^[a-z0-9-]+$/, "El slug solo admite minúsculas, números y guiones"),
+    .regex(/^(\/|[a-z0-9-]+)$/, "El slug solo admite minúsculas, números y guiones"),
   status: z.enum(["draft", "published"]),
 });
 
@@ -65,17 +67,23 @@ export async function updatePage(
   await requireAdmin();
   await connectToDatabase();
 
+  const current = await PageModel.findById(id).select("isSystem slug").lean();
+  if (!current) {
+    return { ok: false, error: "Página no encontrada" };
+  }
+
+  // La home (isSystem) nunca cambia de slug: siempre "/" (HOME_SLUG), pase lo
+  // que pase en el formulario. El resto de páginas usa el slug enviado.
   const meta = metaSchema.safeParse({
     title: payload.title,
-    slug: payload.slug,
+    slug: current.isSystem ? HOME_SLUG : payload.slug,
     status: payload.status,
   });
   if (!meta.success) {
     return { ok: false, error: meta.error.issues[0]?.message ?? "Datos inválidos" };
   }
 
-  // Slug único (excluyendo la propia página).
-  const slug = await uniqueSlug(meta.data.slug, id);
+  const slug = current.isSystem ? HOME_SLUG : await uniqueSlug(meta.data.slug, id);
   const blocks = validateBlocks(payload.blocks);
 
   await PageModel.updateOne(
@@ -94,7 +102,7 @@ export async function updatePage(
   revalidatePath("/admin/pages");
   revalidatePath(`/admin/pages/${id}`);
   revalidatePath("/");
-  revalidatePath(`/${slug}`);
+  if (slug !== HOME_SLUG) revalidatePath(`/${slug}`);
   return { ok: true };
 }
 

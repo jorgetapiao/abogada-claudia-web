@@ -42,7 +42,17 @@ export function PageEditor({ page }: { page: EditablePage }) {
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Slug (URL)</span>
-            <input value={slug} onChange={(e) => setSlug(e.target.value)} className={inputClass} />
+            <input
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              disabled={page.isSystem}
+              className={`${inputClass} ${page.isSystem ? "opacity-60" : ""}`}
+            />
+            {page.isSystem && (
+              <span className="mt-1 block text-xs text-muted-foreground">
+                Es la página de inicio: siempre vive en la raíz del sitio.
+              </span>
+            )}
           </label>
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Estado</span>
