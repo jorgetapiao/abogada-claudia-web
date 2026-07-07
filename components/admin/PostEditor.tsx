@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { BlocksEditor } from "./BlocksEditor";
+import { MediaPicker } from "./MediaPicker";
 import { updatePost } from "@/actions/posts";
 import type { EditablePost } from "@/lib/posts";
 import type { BlockInstance } from "@/blocks/types";
@@ -12,6 +13,7 @@ export function PostEditor({ post }: { post: EditablePost }) {
   const [title, setTitle] = useState(post.title);
   const [slug, setSlug] = useState(post.slug);
   const [excerpt, setExcerpt] = useState(post.excerpt ?? "");
+  const [coverImage, setCoverImage] = useState(post.coverImage ?? "");
   const [status, setStatus] = useState<EditablePost["status"]>(post.status);
   const [content, setContent] = useState<BlockInstance[]>(post.content ?? []);
   const [pending, startTransition] = useTransition();
@@ -20,7 +22,14 @@ export function PostEditor({ post }: { post: EditablePost }) {
   function save() {
     setMsg(null);
     startTransition(async () => {
-      const res = await updatePost(post._id, { title, slug, excerpt, status, content });
+      const res = await updatePost(post._id, {
+        title,
+        slug,
+        excerpt,
+        coverImage,
+        status,
+        content,
+      });
       if (res.ok) {
         setMsg({ type: "ok", text: "Cambios guardados." });
         router.refresh();
@@ -49,6 +58,7 @@ export function PostEditor({ post }: { post: EditablePost }) {
             className={inputClass}
           />
         </label>
+        <MediaPicker label="Imagen de portada" value={coverImage} onChange={setCoverImage} />
         <div className="grid grid-cols-2 gap-4">
           <label className="block">
             <span className="mb-1 block text-sm font-medium">Slug (URL)</span>
@@ -72,7 +82,11 @@ export function PostEditor({ post }: { post: EditablePost }) {
         <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           Contenido
         </h2>
-        <BlocksEditor blocks={content} onChange={setContent} />
+        <BlocksEditor
+          blocks={content}
+          onChange={setContent}
+          allowedTypes={["heading", "paragraph", "image"]}
+        />
       </section>
 
       <div className="sticky bottom-0 flex items-center gap-4 border-t border-border bg-background py-4">

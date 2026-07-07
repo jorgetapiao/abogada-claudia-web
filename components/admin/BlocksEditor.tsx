@@ -3,19 +3,24 @@
 import { useState } from "react";
 import { availableCatalog, getCatalogEntry } from "@/blocks/catalog";
 import { getBlockEditor } from "@/blocks/editors/registry";
-import type { BlockInstance } from "@/blocks/types";
+import type { BlockInstance, BlockType } from "@/blocks/types";
 
 /**
  * Editor de la lista de bloques: agregar, reordenar, eliminar y editar el
  * contenido de cada bloque (mediante el Editor del `editors/registry`).
  * Es controlado: recibe `blocks` y notifica cambios con `onChange`.
+ *
+ * `allowedTypes` restringe el menú "Agregar bloque" (ej. PostEditor solo
+ * ofrece título/párrafo/imagen, no el catálogo completo de páginas).
  */
 export function BlocksEditor({
   blocks,
   onChange,
+  allowedTypes,
 }: {
   blocks: BlockInstance[];
   onChange: (blocks: BlockInstance[]) => void;
+  allowedTypes?: BlockType[];
 }) {
   const [adding, setAdding] = useState(false);
 
@@ -116,7 +121,7 @@ export function BlocksEditor({
         </button>
         {adding && (
           <div className="mt-2 grid gap-1 rounded-md border border-border bg-background p-2 shadow-sm">
-            {availableCatalog().map((entry) => (
+            {availableCatalog(allowedTypes).map((entry) => (
               <button
                 key={entry.type}
                 type="button"

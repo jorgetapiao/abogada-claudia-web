@@ -163,9 +163,10 @@ function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSetti
 
 function HeroTextOnly({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
   const light = useLightText(settings.background, settings.textColor);
+  const isLeft = settings.align === "left";
   return (
     <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
-      <div className="mx-auto max-w-content px-6 text-center">
+      <div className={`mx-auto max-w-content px-6 ${isLeft ? "text-left" : "text-center"}`}>
         <h1
           className={`text-4xl font-semibold md:text-5xl ${
             light ? "text-primary-foreground" : "text-primary"
@@ -174,9 +175,11 @@ function HeroTextOnly({ data, settings }: BlockRenderProps<HeroData, HeroSetting
           {data.heading}
         </h1>
         {data.subheading && (
-          <p className="mx-auto mt-4 max-w-2xl text-lg opacity-80">{data.subheading}</p>
+          <p className={`mt-4 max-w-2xl text-lg opacity-80 ${isLeft ? "" : "mx-auto"}`}>
+            {data.subheading}
+          </p>
         )}
-        <div className="flex justify-center">
+        <div className={`flex ${isLeft ? "justify-start" : "justify-center"}`}>
           <CtaButtons data={data} inverse={light} primaryOnAccentBg={settings.background === "accent"} />
         </div>
       </div>

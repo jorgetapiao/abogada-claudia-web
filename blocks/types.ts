@@ -22,7 +22,10 @@ export type BlockType =
   | "faq"
   | "testimonials"
   | "contactForm"
-  | "statsCounter";
+  | "statsCounter"
+  | "categories"
+  | "heading"
+  | "paragraph";
 
 /** Un bloque tal como se guarda/lee (embebido en Page.blocks o Post.content). */
 export interface BlockInstance<

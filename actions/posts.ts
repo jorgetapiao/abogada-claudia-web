@@ -66,7 +66,7 @@ export async function updatePost(
     content: BlockInstance[];
   }
 ): Promise<ActionResult> {
-  await requireAdmin();
+  const session = await requireAdmin();
   await connectToDatabase();
 
   const meta = metaSchema.safeParse({
@@ -82,6 +82,8 @@ export async function updatePost(
   const slug = await uniqueSlug(meta.data.slug, id);
   const content = validateBlocks(payload.content);
 
+  const existing = await PostModel.findById(id).select("author publishedAt").lean();
+
   await PostModel.updateOne(
     { _id: id },
     {
@@ -92,8 +94,12 @@ export async function updatePost(
         excerpt: meta.data.excerpt ?? "",
         coverImage: payload.coverImage ?? "",
         content,
+        // Autor: se completa una sola vez, con quien guarda el post por primera vez.
+        ...(!existing?.author ? { author: session.user.id } : {}),
         // Marca la fecha de publicación la primera vez que se publica.
-        ...(meta.data.status === "published" ? { publishedAt: new Date() } : {}),
+        ...(meta.data.status === "published" && !existing?.publishedAt
+          ? { publishedAt: new Date() }
+          : {}),
       },
     }
   );

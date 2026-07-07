@@ -125,6 +125,19 @@ export function HeroEditor({
         </Field>
       )}
 
+      {settings.variant === "textOnly" && (
+        <Field label="Alineación">
+          <select
+            value={settings.align}
+            onChange={(e) => setSettings({ align: e.target.value as HeroSettings["align"] })}
+            className={inputClass}
+          >
+            <option value="center">Centro</option>
+            <option value="left">Izquierda</option>
+          </select>
+        </Field>
+      )}
+
       <div className="grid grid-cols-2 gap-4">
         {settings.variant !== "imageBackground" && (
           <SectionBackgroundField

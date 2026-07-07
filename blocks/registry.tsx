@@ -3,6 +3,22 @@ import { HeroBlock } from "./render/HeroBlock";
 import { heroDataSchema, heroSettingsSchema, heroDefault } from "./schemas/hero";
 import { ImageBlock } from "./render/ImageBlock";
 import { imageDataSchema, imageSettingsSchema, imageDefault } from "./schemas/image";
+import { TestimonialsBlock } from "./render/TestimonialsBlock";
+import {
+  testimonialsDataSchema,
+  testimonialsSettingsSchema,
+  testimonialsDefault,
+} from "./schemas/testimonials";
+import { CategoriesBlock } from "./render/CategoriesBlock";
+import {
+  categoriesDataSchema,
+  categoriesSettingsSchema,
+  categoriesDefault,
+} from "./schemas/categories";
+import { HeadingBlock } from "./render/HeadingBlock";
+import { headingDataSchema, headingSettingsSchema, headingDefault } from "./schemas/heading";
+import { ParagraphBlock } from "./render/ParagraphBlock";
+import { paragraphDataSchema, paragraphSettingsSchema, paragraphDefault } from "./schemas/paragraph";
 
 /**
  * Registry de RENDER (server). Mapea cada tipo de bloque a su definición:
@@ -39,6 +55,42 @@ export const blockRegistry: Partial<Record<BlockType, AnyBlockDefinition>> = {
     settingsSchema: imageSettingsSchema,
     default: imageDefault,
     Render: ImageBlock as AnyBlockDefinition["Render"],
+  },
+  testimonials: {
+    type: "testimonials",
+    label: "Reseñas",
+    description: "Título, párrafo y opiniones de clientes.",
+    dataSchema: testimonialsDataSchema,
+    settingsSchema: testimonialsSettingsSchema,
+    default: testimonialsDefault,
+    Render: TestimonialsBlock as AnyBlockDefinition["Render"],
+  },
+  categories: {
+    type: "categories",
+    label: "Categorías",
+    description: "Título, párrafo y categorías con imagen, texto y botón.",
+    dataSchema: categoriesDataSchema,
+    settingsSchema: categoriesSettingsSchema,
+    default: categoriesDefault,
+    Render: CategoriesBlock as AnyBlockDefinition["Render"],
+  },
+  heading: {
+    type: "heading",
+    label: "Título",
+    description: "Un título de sección o subtítulo dentro del contenido.",
+    dataSchema: headingDataSchema,
+    settingsSchema: headingSettingsSchema,
+    default: headingDefault,
+    Render: HeadingBlock as AnyBlockDefinition["Render"],
+  },
+  paragraph: {
+    type: "paragraph",
+    label: "Párrafo",
+    description: "Un bloque de texto simple.",
+    dataSchema: paragraphDataSchema,
+    settingsSchema: paragraphSettingsSchema,
+    default: paragraphDefault,
+    Render: ParagraphBlock as AnyBlockDefinition["Render"],
   },
 };
 

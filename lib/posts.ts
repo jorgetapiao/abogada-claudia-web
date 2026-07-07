@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { connectToDatabase } from "./db";
 import { PostModel } from "@/models/Post";
+import "@/models/User"; // registra el schema "User" para el populate() de abajo
 import type { BlockInstance } from "@/blocks/types";
 
 export interface PublicPostSummary {
@@ -14,6 +15,7 @@ export interface PublicPostSummary {
 
 export interface PublicPost extends PublicPostSummary {
   content: BlockInstance[];
+  author?: { name: string };
   seo?: { metaTitle?: string; metaDescription?: string; ogImage?: string };
 }
 
@@ -52,7 +54,9 @@ export async function getPublishedPosts(): Promise<PublicPostSummary[]> {
 
 export async function getPostBySlug(slug: string): Promise<PublicPost | null> {
   await connectToDatabase();
-  const doc = await PostModel.findOne({ slug, status: "published" }).lean();
+  const doc = await PostModel.findOne({ slug, status: "published" })
+    .populate<{ author?: { name: string } }>("author", "name")
+    .lean();
   return doc ? plain<PublicPost>(doc) : null;
 }
 

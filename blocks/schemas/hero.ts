@@ -26,6 +26,8 @@ export const heroSettingsSchema = z.object({
   textColor: textColorSchema,
   // Solo aplica a la variante "sideBySide".
   imagePosition: z.enum(["right", "left", "center"]).default("right"),
+  // Solo aplica a la variante "textOnly".
+  align: z.enum(["left", "center"]).default("center"),
 });
 
 export type HeroData = z.infer<typeof heroDataSchema>;
