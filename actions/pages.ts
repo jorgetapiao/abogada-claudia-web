@@ -47,7 +47,15 @@ export async function createPage(formData: FormData): Promise<void> {
   const title = String(formData.get("title") ?? "").trim() || "Nueva página";
   const slug = await uniqueSlug(String(formData.get("slug") ?? title) || title);
 
-  const doc = await PageModel.create({ title, slug, status: "draft", blocks: [] });
+  // Las páginas nuevas se agregan al final del orden (la home, order 0,
+  // siempre queda primera y no compite por esta numeración).
+  const last = await PageModel.findOne({ isSystem: { $ne: true } })
+    .sort({ order: -1 })
+    .select("order")
+    .lean();
+  const order = (last?.order ?? 0) + 1;
+
+  const doc = await PageModel.create({ title, slug, status: "draft", blocks: [], order });
 
   revalidatePath("/admin/pages");
   redirect(`/admin/pages/${doc._id}`);
@@ -117,4 +125,39 @@ export async function deletePage(formData: FormData): Promise<void> {
 
   await PageModel.deleteOne({ _id: id });
   revalidatePath("/admin/pages");
+}
+
+/**
+ * Mueve una página un lugar hacia arriba/abajo en el orden del menú. La home
+ * (isSystem) queda excluida: siempre es la primera. Antes de intercambiar,
+ * renumera 1..n todas las páginas no-sistema según el orden actual, así se
+ * autocorrige si había empates (páginas creadas antes de tener este control,
+ * todas con `order: 0`).
+ */
+export async function reorderPage(formData: FormData): Promise<void> {
+  await requireAdmin();
+  await connectToDatabase();
+
+  const id = String(formData.get("id") ?? "");
+  const direction = String(formData.get("direction") ?? "");
+  if (direction !== "up" && direction !== "down") return;
+
+  const docs = await PageModel.find({ isSystem: { $ne: true } })
+    .sort({ order: 1, updatedAt: -1 })
+    .select("_id")
+    .lean();
+
+  const index = docs.findIndex((d) => String(d._id) === id);
+  const swapWith = direction === "up" ? index - 1 : index + 1;
+  if (index === -1 || swapWith < 0 || swapWith >= docs.length) return;
+
+  const ids = docs.map((d) => String(d._id));
+  [ids[index], ids[swapWith]] = [ids[swapWith], ids[index]];
+
+  await Promise.all(
+    ids.map((docId, i) => PageModel.updateOne({ _id: docId }, { $set: { order: i + 1 } }))
+  );
+
+  revalidatePath("/admin/pages");
+  revalidatePath("/");
 }

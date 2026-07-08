@@ -2,23 +2,50 @@ import Image from "next/image";
 import type { BlockRenderProps } from "../types";
 import type { HeroData, HeroSettings } from "../schemas/hero";
 import { sectionBackgroundClass, useLightText } from "../section-background";
+import { Paragraphs } from "./paragraphs";
+
+type HeadingTag = "h1" | "h2";
 
 /**
  * Componente PÚBLICO del bloque `hero` (server component).
  * El aspecto (colores, tipografía, espaciado) viene de los tokens del design
  * system; solo la `variant`/`height` (settings) alteran el layout.
  */
-export function HeroBlock({
+export function HeroBlock(props: BlockRenderProps<HeroData, HeroSettings>) {
+  return <HeroBlockBase {...props} headingTag="h1" />;
+}
+
+/**
+ * Base compartida con `subHero` (ver render/SubHeroBlock.tsx): mismo layout y
+ * campos, solo cambia la jerarquía del título (`<h1>` vs `<h2>`) — el hero
+ * principal lleva el único `<h1>` de la página; el secundario no.
+ */
+export function HeroBlockBase({
   data,
   settings,
-}: BlockRenderProps<HeroData, HeroSettings>) {
+  headingTag,
+}: BlockRenderProps<HeroData, HeroSettings> & { headingTag: HeadingTag }) {
   if (settings.variant === "sideBySide") {
-    return <HeroSideBySide data={data} settings={settings} />;
+    return <HeroSideBySide data={data} settings={settings} Heading={headingTag} />;
   }
   if (settings.variant === "textOnly") {
-    return <HeroTextOnly data={data} settings={settings} />;
+    return <HeroTextOnly data={data} settings={settings} Heading={headingTag} />;
   }
-  return <HeroImageBackground data={data} settings={settings} />;
+  return <HeroImageBackground data={data} settings={settings} Heading={headingTag} />;
+}
+
+/** Texto pequeño arriba del título — mismo estilo que el eyebrow de "Contenido con pestañas". */
+function Eyebrow({ text, light }: { text: string; light: boolean }) {
+  if (!text) return null;
+  return (
+    <p
+      className={`text-sm font-semibold uppercase tracking-wide ${
+        light ? "text-primary-foreground/80" : "text-accent"
+      }`}
+    >
+      {text}
+    </p>
+  );
 }
 
 function heightClass(height: HeroSettings["height"]) {
@@ -68,7 +95,11 @@ function CtaButtons({
   );
 }
 
-function HeroImageBackground({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
+function HeroImageBackground({
+  data,
+  settings,
+  Heading,
+}: BlockRenderProps<HeroData, HeroSettings> & { Heading: HeadingTag }) {
   // No hay una sección de color acá (es una imagen), pero según qué tan clara
   // u oscura sea esa imagen puede hacer falta texto claro u oscuro. "Automático"
   // asume que la imagen es oscura (el overlay navy de siempre); las otras dos
@@ -87,21 +118,22 @@ function HeroImageBackground({ data, settings }: BlockRenderProps<HeroData, Hero
       )}
       <div className={`absolute inset-0 ${light ? "bg-primary/70" : "bg-background/70"}`} />
       <div className="relative z-10 mx-auto w-full max-w-content px-6 text-center">
-        <h1
+        <Eyebrow text={data.eyebrow} light={light} />
+        <Heading
           className={`text-4xl font-semibold md:text-5xl ${
             light ? "text-primary-foreground" : "text-primary"
           }`}
         >
           {data.heading}
-        </h1>
+        </Heading>
         {data.subheading && (
-          <p
-            className={`mx-auto mt-4 max-w-2xl text-lg ${
+          <Paragraphs
+            text={data.subheading}
+            spacing="mt-4"
+            className={`mx-auto max-w-2xl text-lg ${
               light ? "text-primary-foreground/90" : "text-foreground/90"
             }`}
-          >
-            {data.subheading}
-          </p>
+          />
         )}
         <div className="flex justify-center">
           <CtaButtons data={data} inverse={light} />
@@ -111,7 +143,11 @@ function HeroImageBackground({ data, settings }: BlockRenderProps<HeroData, Hero
   );
 }
 
-function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
+function HeroSideBySide({
+  data,
+  settings,
+  Heading,
+}: BlockRenderProps<HeroData, HeroSettings> & { Heading: HeadingTag }) {
   const light = useLightText(settings.background, settings.textColor);
   const headingClass = `text-4xl font-semibold md:text-5xl ${
     light ? "text-primary-foreground" : "text-primary"
@@ -127,9 +163,14 @@ function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSetti
     return (
       <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
         <div className="mx-auto max-w-content px-6 text-center">
-          <h1 className={headingClass}>{data.heading}</h1>
+          <Eyebrow text={data.eyebrow} light={light} />
+          <Heading className={headingClass}>{data.heading}</Heading>
           {data.subheading && (
-            <p className="mx-auto mt-4 max-w-2xl text-lg opacity-80">{data.subheading}</p>
+            <Paragraphs
+              text={data.subheading}
+              spacing="mt-4"
+              className="mx-auto max-w-2xl text-lg opacity-80"
+            />
           )}
           <div className="flex justify-center">{ctas}</div>
           <div className="relative mx-auto mt-10 aspect-[4/3] w-full max-w-2xl overflow-hidden rounded-lg bg-muted">
@@ -145,8 +186,11 @@ function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSetti
     <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
       <div className="mx-auto grid max-w-content grid-cols-1 items-center gap-10 px-6 md:grid-cols-2">
         <div className={imageFirst ? "md:order-2" : ""}>
-          <h1 className={headingClass}>{data.heading}</h1>
-          {data.subheading && <p className="mt-4 text-lg opacity-80">{data.subheading}</p>}
+          <Eyebrow text={data.eyebrow} light={light} />
+          <Heading className={headingClass}>{data.heading}</Heading>
+          {data.subheading && (
+            <Paragraphs text={data.subheading} spacing="mt-4" className="text-lg opacity-80" />
+          )}
           {ctas}
         </div>
         <div
@@ -161,23 +205,30 @@ function HeroSideBySide({ data, settings }: BlockRenderProps<HeroData, HeroSetti
   );
 }
 
-function HeroTextOnly({ data, settings }: BlockRenderProps<HeroData, HeroSettings>) {
+function HeroTextOnly({
+  data,
+  settings,
+  Heading,
+}: BlockRenderProps<HeroData, HeroSettings> & { Heading: HeadingTag }) {
   const light = useLightText(settings.background, settings.textColor);
   const isLeft = settings.align === "left";
   return (
     <section className={`${sectionBackgroundClass(settings.background)} ${heightClass(settings.height)}`}>
       <div className={`mx-auto max-w-content px-6 ${isLeft ? "text-left" : "text-center"}`}>
-        <h1
+        <Eyebrow text={data.eyebrow} light={light} />
+        <Heading
           className={`text-4xl font-semibold md:text-5xl ${
             light ? "text-primary-foreground" : "text-primary"
           }`}
         >
           {data.heading}
-        </h1>
+        </Heading>
         {data.subheading && (
-          <p className={`mt-4 max-w-2xl text-lg opacity-80 ${isLeft ? "" : "mx-auto"}`}>
-            {data.subheading}
-          </p>
+          <Paragraphs
+            text={data.subheading}
+            spacing="mt-4"
+            className={`max-w-2xl text-lg opacity-80 ${isLeft ? "" : "mx-auto"}`}
+          />
         )}
         <div className={`flex ${isLeft ? "justify-start" : "justify-center"}`}>
           <CtaButtons data={data} inverse={light} primaryOnAccentBg={settings.background === "accent"} />

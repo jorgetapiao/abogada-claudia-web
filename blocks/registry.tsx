@@ -1,6 +1,8 @@
 import type { BlockDefinition, BlockType } from "./types";
 import { HeroBlock } from "./render/HeroBlock";
 import { heroDataSchema, heroSettingsSchema, heroDefault } from "./schemas/hero";
+import { SubHeroBlock } from "./render/SubHeroBlock";
+import { subHeroDataSchema, subHeroSettingsSchema, subHeroDefault } from "./schemas/subHero";
 import { ImageBlock } from "./render/ImageBlock";
 import { imageDataSchema, imageSettingsSchema, imageDefault } from "./schemas/image";
 import { TestimonialsBlock } from "./render/TestimonialsBlock";
@@ -19,6 +21,24 @@ import { HeadingBlock } from "./render/HeadingBlock";
 import { headingDataSchema, headingSettingsSchema, headingDefault } from "./schemas/heading";
 import { ParagraphBlock } from "./render/ParagraphBlock";
 import { paragraphDataSchema, paragraphSettingsSchema, paragraphDefault } from "./schemas/paragraph";
+import { FeaturedPostsBlock } from "./render/FeaturedPostsBlock";
+import {
+  featuredPostsDataSchema,
+  featuredPostsSettingsSchema,
+  featuredPostsDefault,
+} from "./schemas/featuredPosts";
+import { ContactFormBlock } from "./render/ContactFormBlock";
+import {
+  contactFormDataSchema,
+  contactFormSettingsSchema,
+  contactFormDefault,
+} from "./schemas/contactForm";
+import { PracticeAreasBlock } from "./render/PracticeAreasBlock";
+import {
+  practiceAreasDataSchema,
+  practiceAreasSettingsSchema,
+  practiceAreasDefault,
+} from "./schemas/practiceAreas";
 
 /**
  * Registry de RENDER (server). Mapea cada tipo de bloque a su definición:
@@ -46,6 +66,16 @@ export const blockRegistry: Partial<Record<BlockType, AnyBlockDefinition>> = {
     settingsSchema: heroSettingsSchema,
     default: heroDefault,
     Render: HeroBlock as AnyBlockDefinition["Render"],
+  },
+  subHero: {
+    type: "subHero",
+    label: "Sección destacada",
+    description:
+      "Título grande, texto y botones para destacar cualquier parte de la página. Se puede agregar donde quieras y las veces que quieras.",
+    dataSchema: subHeroDataSchema,
+    settingsSchema: subHeroSettingsSchema,
+    default: subHeroDefault,
+    Render: SubHeroBlock as AnyBlockDefinition["Render"],
   },
   image: {
     type: "image",
@@ -91,6 +121,36 @@ export const blockRegistry: Partial<Record<BlockType, AnyBlockDefinition>> = {
     settingsSchema: paragraphSettingsSchema,
     default: paragraphDefault,
     Render: ParagraphBlock as AnyBlockDefinition["Render"],
+  },
+  featuredPosts: {
+    type: "featuredPosts",
+    label: "Publicaciones del blog",
+    description:
+      "Título, texto y las publicaciones del blog que elijas, con un botón al blog completo.",
+    dataSchema: featuredPostsDataSchema,
+    settingsSchema: featuredPostsSettingsSchema,
+    default: featuredPostsDefault,
+    Render: FeaturedPostsBlock as AnyBlockDefinition["Render"],
+  },
+  contactForm: {
+    type: "contactForm",
+    label: "Formulario de contacto",
+    description:
+      "Título, texto, datos de contacto y un formulario para que te escriban.",
+    dataSchema: contactFormDataSchema,
+    settingsSchema: contactFormSettingsSchema,
+    default: contactFormDefault,
+    Render: ContactFormBlock as AnyBlockDefinition["Render"],
+  },
+  practiceAreas: {
+    type: "practiceAreas",
+    label: "Contenido con pestañas",
+    description:
+      "Texto pequeño, título, párrafo y dos botones que alternan entre dos grupos de tarjetas. Sirve para áreas de práctica u otro contenido que quieras separar en dos categorías.",
+    dataSchema: practiceAreasDataSchema,
+    settingsSchema: practiceAreasSettingsSchema,
+    default: practiceAreasDefault,
+    Render: PracticeAreasBlock as AnyBlockDefinition["Render"],
   },
 };
 

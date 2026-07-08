@@ -13,9 +13,9 @@ export default async function AdminLayout({
   await requireAdmin();
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main className="flex-1 overflow-auto bg-background">
+      <main className="flex-1 overflow-y-auto bg-background">
         <div className="mx-auto max-w-4xl px-8 py-10">{children}</div>
       </main>
     </div>

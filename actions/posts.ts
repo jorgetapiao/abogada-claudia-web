@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/require-admin";
 import { PostModel } from "@/models/Post";
 import { validateBlocks } from "@/lib/validate-blocks";
 import { slugify } from "@/lib/slug";
+import { getPublishedPosts, type PublicPostSummary } from "@/lib/posts";
 import type { BlockInstance } from "@/blocks/types";
 
 const metaSchema = z.object({
@@ -109,6 +110,12 @@ export async function updatePost(
   revalidatePath("/blog");
   revalidatePath(`/blog/${slug}`);
   return { ok: true };
+}
+
+/** Lista los posts publicados para el selector del bloque `featuredPosts`. */
+export async function listPublishedPosts(): Promise<PublicPostSummary[]> {
+  await requireAdmin();
+  return getPublishedPosts();
 }
 
 export async function deletePost(formData: FormData): Promise<void> {

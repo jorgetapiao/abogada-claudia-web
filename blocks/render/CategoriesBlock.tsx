@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { BlockRenderProps } from "../types";
 import type { CategoriesData, CategoriesSettings } from "../schemas/categories";
 import { sectionBackgroundClass, useLightText } from "../section-background";
+import { Paragraphs } from "./paragraphs";
 
 const columnsClass: Record<CategoriesSettings["columns"], string> = {
   "2": "md:grid-cols-2",
@@ -29,7 +30,11 @@ export function CategoriesBlock({
           </h2>
         )}
         {data.paragraph && (
-          <p className="mx-auto mt-4 max-w-2xl text-lg opacity-80">{data.paragraph}</p>
+          <Paragraphs
+            text={data.paragraph}
+            spacing="mt-4"
+            className="mx-auto max-w-2xl text-lg opacity-80"
+          />
         )}
 
         {data.items.length > 0 && (
@@ -50,7 +55,9 @@ export function CategoriesBlock({
                     {item.title}
                   </h3>
                 )}
-                {item.paragraph && <p className="mt-2 opacity-80">{item.paragraph}</p>}
+                {item.paragraph && (
+                  <Paragraphs text={item.paragraph} spacing="mt-2" className="opacity-80" />
+                )}
                 {item.buttonLabel && (
                   <a
                     href={item.buttonHref || "#"}

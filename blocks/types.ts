@@ -14,6 +14,7 @@ import type { ZodType } from "zod";
 /** Catálogo MVP de tipos de bloque. */
 export type BlockType =
   | "hero"
+  | "subHero"
   | "richText"
   | "image"
   | "servicesGrid"
@@ -25,7 +26,9 @@ export type BlockType =
   | "statsCounter"
   | "categories"
   | "heading"
-  | "paragraph";
+  | "paragraph"
+  | "featuredPosts"
+  | "practiceAreas";
 
 /** Un bloque tal como se guarda/lee (embebido en Page.blocks o Post.content). */
 export interface BlockInstance<

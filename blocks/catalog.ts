@@ -1,10 +1,14 @@
 import type { BlockType } from "./types";
 import { heroDefault } from "./schemas/hero";
+import { subHeroDefault } from "./schemas/subHero";
 import { imageDefault } from "./schemas/image";
 import { testimonialsDefault } from "./schemas/testimonials";
 import { categoriesDefault } from "./schemas/categories";
 import { headingDefault } from "./schemas/heading";
 import { paragraphDefault } from "./schemas/paragraph";
+import { featuredPostsDefault } from "./schemas/featuredPosts";
+import { contactFormDefault } from "./schemas/contactForm";
+import { practiceAreasDefault } from "./schemas/practiceAreas";
 
 /**
  * Catálogo CLIENT-SAFE de bloques: solo datos (tipo, etiqueta, valores por
@@ -25,6 +29,13 @@ export const blockCatalog: Partial<Record<BlockType, BlockCatalogEntry>> = {
     label: "Portada (Hero)",
     description: "Cabecera grande con título, subtítulo, imagen y botones.",
     default: heroDefault,
+  },
+  subHero: {
+    type: "subHero",
+    label: "Sección destacada",
+    description:
+      "Título grande, texto y botones para destacar cualquier parte de la página. Se puede agregar donde quieras y las veces que quieras.",
+    default: subHeroDefault,
   },
   image: {
     type: "image",
@@ -55,6 +66,27 @@ export const blockCatalog: Partial<Record<BlockType, BlockCatalogEntry>> = {
     label: "Párrafo",
     description: "Un bloque de texto simple.",
     default: paragraphDefault,
+  },
+  featuredPosts: {
+    type: "featuredPosts",
+    label: "Publicaciones del blog",
+    description:
+      "Título, texto y las publicaciones del blog que elijas, con un botón al blog completo.",
+    default: featuredPostsDefault,
+  },
+  contactForm: {
+    type: "contactForm",
+    label: "Formulario de contacto",
+    description:
+      "Título, texto, datos de contacto y un formulario para que te escriban.",
+    default: contactFormDefault,
+  },
+  practiceAreas: {
+    type: "practiceAreas",
+    label: "Contenido con pestañas",
+    description:
+      "Texto pequeño, título, párrafo y dos botones que alternan entre dos grupos de tarjetas. Sirve para áreas de práctica u otro contenido que quieras separar en dos categorías.",
+    default: practiceAreasDefault,
   },
   // TODO: agregar aquí cada bloque nuevo (mismo `default` que su schema).
 };

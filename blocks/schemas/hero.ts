@@ -7,6 +7,8 @@ import { sectionBackgroundSchema, textColorSchema } from "../section-background"
  *  - para generar los valores por defecto al crear el bloque.
  */
 export const heroDataSchema = z.object({
+  // Texto pequeño arriba del título (mismo estilo que el eyebrow del bloque "Contenido con pestañas").
+  eyebrow: z.string().default(""),
   heading: z.string().default(""),
   subheading: z.string().default(""),
   backgroundImage: z.string().default(""), // URL del CDN de Bunny

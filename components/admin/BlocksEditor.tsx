@@ -27,13 +27,16 @@ export function BlocksEditor({
   function addBlock(type: string) {
     const entry = getCatalogEntry(type);
     if (!entry) return;
+    // El hero lleva el <h1> de la página: solo tiene sentido como primer
+    // bloque, así que solo se puede agregar cuando todavía no hay ninguno.
+    if (type === "hero" && blocks.length > 0) return;
     const block: BlockInstance = {
       _id: crypto.randomUUID(),
       type,
       data: structuredClone(entry.default.data) as Record<string, unknown>,
       settings: structuredClone(entry.default.settings) as Record<string, unknown>,
     };
-    onChange([...blocks, block]);
+    onChange(type === "hero" ? [block, ...blocks] : [...blocks, block]);
     setAdding(false);
   }
 
@@ -44,6 +47,8 @@ export function BlocksEditor({
   function move(index: number, dir: -1 | 1) {
     const target = index + dir;
     if (target < 0 || target >= blocks.length) return;
+    // El hero no puede cambiar de posición ni ser desplazado de la primera.
+    if (blocks[index].type === "hero" || blocks[target].type === "hero") return;
     const copy = [...blocks];
     [copy[index], copy[target]] = [copy[target], copy[index]];
     onChange(copy);
@@ -79,16 +84,24 @@ export function BlocksEditor({
             <div className="flex items-center justify-between border-b border-border bg-muted px-4 py-2">
               <span className="text-sm font-medium">{entry?.label ?? block.type}</span>
               <div className="flex items-center gap-1">
-                <IconButton label="Subir" onClick={() => move(index, -1)} disabled={index === 0}>
-                  ↑
-                </IconButton>
-                <IconButton
-                  label="Bajar"
-                  onClick={() => move(index, 1)}
-                  disabled={index === blocks.length - 1}
-                >
-                  ↓
-                </IconButton>
+                {block.type !== "hero" && (
+                  <>
+                    <IconButton
+                      label="Subir"
+                      onClick={() => move(index, -1)}
+                      disabled={index === 0 || blocks[index - 1]?.type === "hero"}
+                    >
+                      ↑
+                    </IconButton>
+                    <IconButton
+                      label="Bajar"
+                      onClick={() => move(index, 1)}
+                      disabled={index === blocks.length - 1}
+                    >
+                      ↓
+                    </IconButton>
+                  </>
+                )}
                 <IconButton label="Eliminar" onClick={() => removeBlock(index)}>
                   ✕
                 </IconButton>
@@ -97,8 +110,12 @@ export function BlocksEditor({
             <div className="p-4">
               {Editor ? (
                 <Editor
-                  data={block.data}
-                  settings={block.settings}
+                  // Combinado con los valores por defecto del catálogo: si el
+                  // bloque se guardó antes de que existiera un campo nuevo del
+                  // schema (ej. "eyebrow" agregado a hero), no llega `undefined`
+                  // al input controlado — ver bug de "uncontrolled to controlled".
+                  data={{ ...(entry?.default.data as object), ...block.data }}
+                  settings={{ ...(entry?.default.settings as object), ...block.settings }}
                   onChange={(next) => updateBlock(index, next)}
                 />
               ) : (
@@ -121,7 +138,9 @@ export function BlocksEditor({
         </button>
         {adding && (
           <div className="mt-2 grid gap-1 rounded-md border border-border bg-background p-2 shadow-sm">
-            {availableCatalog(allowedTypes).map((entry) => (
+            {availableCatalog(allowedTypes)
+              .filter((entry) => entry.type !== "hero" || blocks.length === 0)
+              .map((entry) => (
               <button
                 key={entry.type}
                 type="button"

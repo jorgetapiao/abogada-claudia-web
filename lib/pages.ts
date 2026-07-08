@@ -46,6 +46,7 @@ export interface PageListItem {
   status: "draft" | "published";
   isSystem?: boolean;
   updatedAt?: string;
+  order: number;
 }
 
 /** Convierte un documento Mongoose (lean) en un objeto plano serializable. */
@@ -132,7 +133,7 @@ export async function getAllPages(): Promise<PageListItem[]> {
   await ensureHomePage();
   const docs = await PageModel.find()
     .sort({ order: 1, updatedAt: -1 })
-    .select("title slug status isSystem updatedAt")
+    .select("title slug status isSystem updatedAt order")
     .lean();
   return plain<PageListItem[]>(docs);
 }
