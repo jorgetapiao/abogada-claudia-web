@@ -2,6 +2,7 @@ import { connectToDatabase } from "./db";
 import { PageModel } from "@/models/Page";
 import { PostModel } from "@/models/Post";
 import { ContactModel } from "@/models/Contact";
+import { ContactSubmissionModel } from "@/models/ContactSubmission";
 
 export interface DashboardStats {
   pages: number;
@@ -27,7 +28,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     PageModel.countDocuments({ status: "published" }),
     PostModel.countDocuments(),
     PostModel.countDocuments({ status: "published" }),
-    ContactModel.countDocuments({ status: "new" }),
+    ContactSubmissionModel.countDocuments({ status: "new" }),
     ContactModel.countDocuments(),
   ]);
 
