@@ -10,6 +10,7 @@ export const categoryItemSchema = z.object({
 });
 
 export const categoriesDataSchema = z.object({
+  eyebrow: z.string().default(""),
   heading: z.string().default(""),
   paragraph: z.string().default(""),
   items: z.array(categoryItemSchema).default([]),

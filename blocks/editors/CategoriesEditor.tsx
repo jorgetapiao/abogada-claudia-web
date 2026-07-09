@@ -33,6 +33,15 @@ export function CategoriesEditor({
 
   return (
     <div className="grid gap-4">
+      <Field label="Texto pequeño (arriba del título)">
+        <input
+          type="text"
+          value={data.eyebrow}
+          onChange={(e) => setData({ eyebrow: e.target.value })}
+          className={inputClass}
+        />
+      </Field>
+
       <Field label="Título">
         <input
           type="text"
