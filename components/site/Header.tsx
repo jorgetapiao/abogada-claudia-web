@@ -49,7 +49,7 @@ export async function Header() {
 function WhatsAppButton() {
   return (
     <a
-      href="https://wa.me/5491122334455"
+      href="https://wa.me/56946978661"
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2 font-medium text-accent-foreground transition-opacity hover:opacity-90"
